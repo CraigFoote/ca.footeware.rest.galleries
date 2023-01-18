@@ -1,9 +1,11 @@
 # Building and Deploying
-* mvn clean install to generate the docker image
-* docker tag rest.galleries:[version] craigfoote/rest.galleries:latest
-* docker push craigfoote/rest.galleries:latest
-* docker run -p 8000:8000 -v /opt/galleries:/opt/galleries -t craigfoote/rest.galleries:latest &
-* http://localhost:8000/galleries
+1. mvn clean install to generate the docker image
+2. docker tag rest.galleries:[version] craigfoote/rest.galleries:[version]
+3. docker push craigfoote/rest.galleries:[version]
+4. docker tag rest.galleries:[version] craigfoote/rest.galleries:latest
+5. docker push craigfoote/rest.galleries:latest
+6. docker run -p 8000:8000 -v /opt/galleries:/opt/galleries -t craigfoote/rest.galleries:latest &
+7. http://localhost:8000/galleries
 
 # Reference Documentation
 For further reference, please consider the following sections:
