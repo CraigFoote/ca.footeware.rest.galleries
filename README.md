@@ -3,6 +3,7 @@
 * docker tag rest.galleries:[version] craigfoote/rest.galleries:latest
 * docker push craigfoote/rest.galleries:latest
 * docker run -p 8000:8000 -v /opt/galleries:/opt/galleries -t craigfoote/rest.galleries:latest &
+* http://localhost:8000/galleries
 
 # Reference Documentation
 For further reference, please consider the following sections:
