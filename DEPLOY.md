@@ -1,1 +1,0 @@
-docker run -p 8060:8060 -v /opt/galleries:/opt/galleries -t rest.galleries:1.0.0 &
