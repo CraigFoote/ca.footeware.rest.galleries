@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "images.thumbnails.max.dimension",
+    "type": "java.lang.String",
+    "description": "A description for 'images.thumbnails.max.dimension'"
+  },
+  {
+    "name": "images.max.dimension",
+    "type": "java.lang.String",
+    "description": "A description for 'images.max.dimension'"
+  },
+  {
+    "name": "images.path",
+    "type": "java.lang.String",
+    "description": "A description for 'images.path'"
+  }
+]}
