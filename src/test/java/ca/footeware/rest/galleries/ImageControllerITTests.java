@@ -5,12 +5,16 @@ package ca.footeware.rest.galleries;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Base64;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -21,8 +25,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.jayway.jsonpath.JsonPath;
 
 import ca.footeware.rest.galleries.controllers.ImageController;
 import jakarta.servlet.ServletException;
@@ -34,12 +42,11 @@ import jakarta.servlet.ServletException;
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@EnableWebMvc
 class ImageControllerITTests {
 
 	@Autowired
 	private MockMvc mvc;
-	@LocalServerPort
-	private int port;
 
 	/**
 	 * Test method for
@@ -64,77 +71,60 @@ class ImageControllerITTests {
 	 */
 	@Test
 	void testGetGallery() throws Exception {
-		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1")).andExpect(status().isOk())
+		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1")).andDo(print()).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()", is(4)))
 				.andExpect(result -> result.getResponse()).andReturn();
-		String string = mvcResult.getResponse().getContentAsString();
-		Assertions.assertTrue(string.contains("David in Ferryland-1_modified.jpg"));
+		String json = mvcResult.getResponse().getContentAsString();
+		Assertions.assertTrue(json.contains("David in Ferryland-1_modified.jpg"));
+
+		JsonPath path = JsonPath.compile("$[0]");
+		Map<String, String> map = path.read(json);
+		Assertions.assertEquals("David in Ferryland-1_modified.jpg", map.get("filename"));
+		String encoded = map.get("image");
+		byte[] bytes = Base64.getDecoder().decode(encoded);
+		InputStream is = new ByteArrayInputStream(bytes);
+		BufferedImage image = ImageIO.read(is);
+		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
+		Assertions.assertEquals(84, image.getHeight(), "Image wrong height.");
 	}
 
 	@Test
 	void testGetImage() throws Exception {
 		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1/test-image-horizontal.png"))
-				.andExpect(status().isOk()).andReturn();
-		byte[] bytes = mvcResult.getResponse().getContentAsByteArray();
+				.andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+				.andReturn();
+		String encoded = mvcResult.getResponse().getContentAsString();
+		byte[] bytes = Base64.getDecoder().decode(encoded);
 		InputStream is = new ByteArrayInputStream(bytes);
 		BufferedImage image = ImageIO.read(is);
 		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(1241, image.getHeight(), "Image wrong height.");
 
-		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-vertical.png")).andExpect(status().isOk())
+		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-vertical.png"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
 				.andReturn();
-		bytes = mvcResult.getResponse().getContentAsByteArray();
+		encoded = mvcResult.getResponse().getContentAsString();
+		bytes = Base64.getDecoder().decode(encoded);
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
 		Assertions.assertEquals(1241, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(1920, image.getHeight(), "Image wrong height.");
 
-		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-square.png")).andExpect(status().isOk())
+		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-square.png"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
 				.andReturn();
-		bytes = mvcResult.getResponse().getContentAsByteArray();
+		encoded = mvcResult.getResponse().getContentAsString();
+		bytes = Base64.getDecoder().decode(encoded);
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
 		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(1920, image.getHeight(), "Image wrong height.");
-	}
-
-	@Test
-	void badImageName() throws Exception {
-		ServletException thrown = Assertions.assertThrows(ServletException.class, () -> {
-			mvc.perform(get("/galleries/gallery1/test-image-bad.png"));
-		}, "ServletException was expected");
-		Assertions.assertEquals("gallery1/test-image-bad.png not found.", thrown.getCause().getMessage());
-	}
-
-	/**
-	 * Test method for
-	 * {@link ImageController#getThumbnail(java.lang.String, java.lang.String)}.
-	 * @throws Exception 
-	 */
-	@Test
-	void testGetThumbnail() throws Exception {
-		MvcResult result = mvc.perform(get("/galleries/thumbnails/gallery1/test-image-horizontal.png")).andReturn();
-		byte[] bytes = result.getResponse().getContentAsByteArray();
-		Assertions.assertEquals(2781, bytes.length, "Wrong number of bytes for thumbnail.");
-		BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
-		Assertions.assertEquals(97, image.getHeight(), "Image wrong height.");
-
-		result = mvc.perform(get("/galleries/thumbnails/gallery1/test-image-vertical.png")).andReturn();
-		bytes = result.getResponse().getContentAsByteArray();
-		Assertions.assertEquals(1395, bytes.length, "Wrong number of bytes for thumbnail.");
-		image = ImageIO.read(new ByteArrayInputStream(bytes));
-		Assertions.assertEquals(97, image.getWidth(), "Image wrong width.");
-		Assertions.assertEquals(150, image.getHeight(), "Image wrong height.");
-
-		result = mvc.perform(get("/galleries/thumbnails/gallery1/test-image-square.png")).andReturn();
-		bytes = result.getResponse().getContentAsByteArray();
-		Assertions.assertEquals(1617, bytes.length, "Wrong number of bytes for thumbnail.");
-		image = ImageIO.read(new ByteArrayInputStream(bytes));
-		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
-		Assertions.assertEquals(150, image.getHeight(), "Image wrong height.");
 
 		ServletException thrown = Assertions.assertThrows(ServletException.class, () -> {
 			mvc.perform(get("/galleries/gallery1/test-image-bad.png"));
 		}, "ServletException was expected");
 		Assertions.assertEquals("gallery1/test-image-bad.png not found.", thrown.getCause().getMessage());
 	}
-
 }

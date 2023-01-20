@@ -4,7 +4,8 @@
 package ca.footeware.rest.galleries.controllers;
 
 import java.io.File;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.footeware.rest.galleries.exceptions.ImageException;
 import ca.footeware.rest.galleries.models.Gallery;
+import ca.footeware.rest.galleries.models.Thumbnail;
 import ca.footeware.rest.galleries.services.ImageService;
 
 /**
@@ -75,21 +77,23 @@ public class ImageController {
 	 * obtained from images in images.path.
 	 *
 	 * @param galleryName {@link String}
-	 * @return {@link Map} of {@link String} to {@link String}
+	 * @return {@link List} of {@link Thumbnail}
 	 * @throws ImageException if an image-related exception occurs.
 	 */
-	@GetMapping("/galleries/{galleryName}")
-	public Map<String, String> getGallery(@PathVariable String galleryName) throws ImageException {
-		Map<String, String> thumbs = new LinkedHashMap<>();
+	@GetMapping(value = "/galleries/{galleryName}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Thumbnail> getGallery(@PathVariable String galleryName) throws ImageException {
+		checkName(galleryName);
+		List<Thumbnail> thumbs = new ArrayList<>();
 		for (File file : service.getFiles(galleryName)) {
 			Map<String, String> exif = service.getExif(file);
 			String name = file.getName();
 			if ("secret".equals(name)) {
 				break;
-			} else if (exif != null) {
-				thumbs.put(name, compileExifString(name, exif));
 			} else {
-				thumbs.put(name, "");
+				String exifString = compileExifString(name, exif);
+				byte[] bytes = service.getThumbnailAsBytes(galleryName, name);
+				String encodedBytes = Base64.getEncoder().encodeToString(bytes);
+				thumbs.add(new Thumbnail(name, exifString, encodedBytes));
 			}
 		}
 		return thumbs;
@@ -104,27 +108,23 @@ public class ImageController {
 	 *         the bytes, i.e as jpegs
 	 * @throws ImageException when an image-related exception occurs
 	 */
-	@GetMapping(value = "/galleries/{galleryName}/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
-	public byte[] getImage(@PathVariable String galleryName, @PathVariable String imageName) throws ImageException {
-		// Restrict the galleryName to letters and digits only
-		if (!galleryName.matches("[\\sa-zA-Z0-9_-]++")) {
-			throw new ImageException(
-					"Invalid gallery name:" + galleryName + ". Must be spaces, a-z, A-Z, 0-9, underscore or dashes.");
-		}
-		return service.getImageAsBytes(galleryName, imageName);
+	@GetMapping(value = "/galleries/{galleryName}/{imageName}", produces = MediaType.TEXT_PLAIN_VALUE)
+	public String getImage(@PathVariable String galleryName, @PathVariable String imageName) throws ImageException {
+		checkName(galleryName);
+		byte[] bytes = service.getImageAsBytes(galleryName, imageName);
+		return Base64.getEncoder().encodeToString(bytes);
 	}
 
 	/**
-	 * Get the thumbnail version from the received gallery and image name.
-	 *
-	 * @param galleryName {@link String} gallery name
-	 * @param imageName   {@link String} image name
-	 * @return byte[] the 'produces' attribute dictates how the browser will handle
-	 *         the bytes, i.e. as jpegs
-	 * @throws ImageException if an image-related exception occurs.
+	 * Restrict the #name to letters, digits and dashes only.
+	 * 
+	 * @return boolean true if name passes test
+	 * @throws ImageException when an image-related exception occurs
 	 */
-	@GetMapping(value = "/galleries/thumbnails/{galleryName}/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
-	public byte[] getThumbnail(@PathVariable String galleryName, @PathVariable String imageName) throws ImageException {
-		return service.getThumbnailAsBytes(galleryName, imageName);
+	private void checkName(String name) throws ImageException {
+		if (!name.matches("[\\sa-zA-Z0-9_-]++")) {
+			throw new ImageException(
+					"Invalid gallery name:" + name + ". Must be spaces, a-z, A-Z, 0-9, underscore or dashes.");
+		}
 	}
 }
