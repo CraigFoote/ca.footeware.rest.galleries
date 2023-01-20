@@ -1,7 +1,5 @@
 package ca.footeware.rest.galleries.models;
 
-import java.io.File;
-
 /**
  * A named folder with optional 'secret' file.
  *
@@ -9,16 +7,8 @@ import java.io.File;
  */
 public class Gallery {
 
-	private File folder;
 	private String name;
 	private boolean secret;
-
-	/**
-	 * @return the folder
-	 */
-	public File getFolder() {
-		return folder;
-	}
 
 	/**
 	 * @return the name
@@ -32,13 +22,6 @@ public class Gallery {
 	 */
 	public boolean isSecret() {
 		return secret;
-	}
-
-	/**
-	 * @param folder the folder to set
-	 */
-	public void setFolder(File folder) {
-		this.folder = folder;
 	}
 
 	/**

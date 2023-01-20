@@ -235,7 +235,6 @@ public class ImageService {
 			var gallery = new Gallery();
 			gallery.setName(file.getName());
 			if (file.isDirectory()) {
-				gallery.setFolder(file);
 				String folderName = file.getName();
 				if (!folderName.matches("[\\sa-zA-Z0-9_-]++")) {
 					throw new ImageException("Invalid gallery name: " + folderName

@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -92,8 +91,7 @@ class ImageControllerITTests {
 	@Test
 	void testGetImage() throws Exception {
 		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1/test-image-horizontal.png"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+				.andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
 				.andReturn();
 		String encoded = mvcResult.getResponse().getContentAsString();
 		byte[] bytes = Base64.getDecoder().decode(encoded);
@@ -102,20 +100,16 @@ class ImageControllerITTests {
 		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(1241, image.getHeight(), "Image wrong height.");
 
-		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-vertical.png"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-				.andReturn();
+		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-vertical.png")).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)).andReturn();
 		encoded = mvcResult.getResponse().getContentAsString();
 		bytes = Base64.getDecoder().decode(encoded);
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
 		Assertions.assertEquals(1241, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(1920, image.getHeight(), "Image wrong height.");
 
-		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-square.png"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-				.andReturn();
+		mvcResult = mvc.perform(get("/galleries/gallery1/test-image-square.png")).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN)).andReturn();
 		encoded = mvcResult.getResponse().getContentAsString();
 		bytes = Base64.getDecoder().decode(encoded);
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
