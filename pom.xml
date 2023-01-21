@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ca.footeware</groupId>
 	<artifactId>rest.galleries</artifactId>
-	<version>2.1.0</version>
+	<version>2.2.0</version>
 	<name>ca.footeware.rest.galleries</name>
 	<description>Footeware Galleries REST service</description>
 	<properties>
@@ -56,6 +56,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-imaging</artifactId>
 			<version>1.0-alpha3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda.imageio</groupId>
+			<artifactId>webp-imageio</artifactId>
+			<version>0.1.6</version>
 		</dependency>
 	</dependencies>
 	<build>

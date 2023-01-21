@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ class ImageServiceTests {
 	private static final String IMAGE_HORIZONTAL = "test-image-horizontal.png";
 	private static final String IMAGE_SQUARE = "test-image-square.png";
 	private static final String IMAGE_VERTICAL = "test-image-vertical.png";
+	private static final String IMAGE_WEBP = "David.webp";
 
 	@Value("${images.path}")
 	String imagesPath;
@@ -48,21 +50,31 @@ class ImageServiceTests {
 	private ImageService service;
 
 	/**
-	 * Test method for {@link ca.footeware.rest.galleries.services.ImageService#getExif(File)}
+	 * Test method for
+	 * {@link ca.footeware.rest.galleries.services.ImageService#getExif(File)}
 	 *
 	 * @throws ImageException when shit goes south
 	 * @throws IOException    when shit goes south
 	 */
 	@Test
 	void testExif() throws ImageException, IOException {
-		Gallery gallery = service.getGalleries().get(0);
-		File[] imageFiles = service.getFiles(gallery.getName());
-		Map<String, String> exif = service.getExif(imageFiles[0]);
-		Assertions.assertTrue(exif.containsKey("Model"), "Missing 'Model' entry.");
+		for (Gallery gallery : service.getGalleries()) {
+			File[] imageFiles = service.getFiles(gallery.getName());
+			for (File file : imageFiles) {
+				Map<String, String> exif = service.getExif(file);
+				if ("webp".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))
+						|| "png".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+					Assertions.assertTrue(exif != null);
+				} else {
+					Assertions.assertTrue(exif.containsKey("Model"), "Missing 'Model' entry for file:" + file);
+				}
+			}
+		}
 	}
 
 	/**
-	 * Test method for {@link ca.footeware.rest.galleries.services.ImageService#getFiles()}.
+	 * Test method for
+	 * {@link ca.footeware.rest.galleries.services.ImageService#getFiles()}.
 	 */
 	@Test
 	void testGetFiles() {
@@ -105,6 +117,11 @@ class ImageServiceTests {
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
 		Assertions.assertEquals(1920, image.getHeight(), "Image wrong height.");
 		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
+		
+		bytes = service.getImageAsBytes(GALLERY_NAME, IMAGE_WEBP);
+		image = ImageIO.read(new ByteArrayInputStream(bytes));
+		Assertions.assertEquals(1079, image.getHeight(), "Image wrong height.");
+		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
 	}
 
 	/**
@@ -130,10 +147,16 @@ class ImageServiceTests {
 		image = ImageIO.read(new ByteArrayInputStream(bytes));
 		Assertions.assertEquals(150, image.getHeight(), "Image wrong height.");
 		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
+		
+		bytes = service.getThumbnailAsBytes(GALLERY_NAME, IMAGE_WEBP);
+		image = ImageIO.read(new ByteArrayInputStream(bytes));
+		Assertions.assertEquals(84, image.getHeight(), "Image wrong height.");
+		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
 	}
 
 	/**
-	 * Test method for {@link ca.footeware.rest.galleries.services.ImageService#ImageService}.
+	 * Test method for
+	 * {@link ca.footeware.rest.galleries.services.ImageService#ImageService}.
 	 *
 	 * @throws ImageException when shit goes south
 	 */
@@ -159,8 +182,8 @@ class ImageServiceTests {
 		Assertions.assertNotNull(image);
 		int width = image.getWidth();
 		int height = image.getHeight();
-		Assertions.assertEquals(width, maxTnDim.intValue(), "Thumbnail was not the correct width.");
-		Assertions.assertTrue(height <= maxTnDim, "Thumbnail was too tall.");
+		Assertions.assertEquals(width, maxTnDim.intValue(), "ImageDTO was not the correct width.");
+		Assertions.assertTrue(height <= maxTnDim, "ImageDTO was too tall.");
 
 		bytes = service.getImageAsBytes(GALLERY_NAME, IMAGE_VERTICAL);
 		originalImage = ImageIO.read(new ByteArrayInputStream(bytes));
@@ -169,8 +192,8 @@ class ImageServiceTests {
 		Assertions.assertNotNull(image);
 		width = image.getWidth();
 		height = image.getHeight();
-		Assertions.assertTrue(width <= maxTnDim, "Thumbnail was too wide.");
-		Assertions.assertEquals(height, maxTnDim.intValue(), "Thumbnail was not the correct height.");
+		Assertions.assertTrue(width <= maxTnDim, "ImageDTO was too wide.");
+		Assertions.assertEquals(height, maxTnDim.intValue(), "ImageDTO was not the correct height.");
 
 		bytes = service.getImageAsBytes(GALLERY_NAME, IMAGE_SQUARE);
 		originalImage = ImageIO.read(new ByteArrayInputStream(bytes));
@@ -179,8 +202,8 @@ class ImageServiceTests {
 		Assertions.assertNotNull(image);
 		width = image.getWidth();
 		height = image.getHeight();
-		Assertions.assertEquals(width, maxTnDim.intValue(), "Thumbnail was not the correct width.");
-		Assertions.assertEquals(height, maxTnDim.intValue(), "Thumbnail was not the correct height.");
+		Assertions.assertEquals(width, maxTnDim.intValue(), "ImageDTO was not the correct width.");
+		Assertions.assertEquals(height, maxTnDim.intValue(), "ImageDTO was not the correct height.");
 	}
 
 }

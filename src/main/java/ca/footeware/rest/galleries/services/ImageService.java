@@ -21,10 +21,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.common.ImageMetadata;
-import org.apache.commons.imaging.common.ImageMetadata.ImageMetadataItem;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
 import org.springframework.beans.factory.annotation.Value;
@@ -132,20 +128,20 @@ public class ImageService {
 	 */
 	public Map<String, String> getExif(File file) throws ImageException {
 		Map<String, String> map = new LinkedHashMap<>();
-		if (!"secret".equals(file.getName())) {
-			try {
-				ImageMetadata metadata = Imaging.getMetadata(file);
-				if (metadata != null) {
-					List<? extends ImageMetadataItem> items = metadata.getItems();
-					for (ImageMetadataItem item : items) {
-						String[] split = item.toString().split(": ");
-						map.put(split[0], split[1]);
-					}
-				}
-			} catch (ImageReadException | IOException e) {
-				throw new ImageException(e.getLocalizedMessage());
-			}
-		}
+//		if (!"secret".equals(file.getName()) && !"webp".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+//			try {
+//				ImageMetadata metadata = Imaging.getMetadata(file);
+//				if (metadata != null) {
+//					List<? extends ImageMetadataItem> items = metadata.getItems();
+//					for (ImageMetadataItem item : items) {
+//						String[] split = item.toString().split(": ");
+//						map.put(split[0], split[1]);
+//					}
+//				}
+//			} catch (ImageReadException | IOException e) {
+//				throw new ImageException(e.getLocalizedMessage());
+//			}
+//		}
 		return map;
 	}
 
