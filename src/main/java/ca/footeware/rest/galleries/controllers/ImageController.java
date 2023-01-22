@@ -103,10 +103,12 @@ public class ImageController {
 			if ("secret".equals(filename)) {
 				break;
 			} else {
-				Map<String, String> exif = service.getExif(file);
-				String exifString = compileExifString(filename, exif);
+//				Map<String, String> exif = service.getExif(file);
+//				String exifString = compileExifString(filename, exif);
+				String exifString = "";
 				Encoder encoder = Base64.getEncoder();
-				String encodedThumb = encoder.encodeToString(service.getThumbnailAsBytes(galleryName, filename));
+				byte[] thumbnailAsBytes = service.getThumbnailAsBytes(galleryName, filename);
+				String encodedThumb = encoder.encodeToString(thumbnailAsBytes);
 				String encodedImage = encoder.encodeToString(service.getImageAsBytes(galleryName, filename));
 				dtos.add(new ImageDTO(filename, exifString, encodedThumb, encodedImage));
 			}

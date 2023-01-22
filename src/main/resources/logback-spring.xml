@@ -4,6 +4,7 @@
 	<include
 		resource="org/springframework/boot/logging/logback/base.xml" />
 
+	<property name="LOG_NAME" value="rest.galleries" />
 	<property name="LOG_HOME" value="./logs" />
 
 	<property name="LOG_PATTERN"
@@ -18,7 +19,7 @@
 
 	<appender name="LOGFILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_HOME}/rest.galleries.log</file>
+		<file>${LOG_HOME}/${LOG_NAME}.log</file>
 		<encoder
 			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>${LOG_PATTERN}</Pattern>
@@ -26,7 +27,7 @@
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 			<!-- roll-over daily -->
-			<fileNamePattern>${LOG_HOME}/archived/footeware-web.%d{yyyy-MM-dd}.%i.log
+			<fileNamePattern>${LOG_HOME}/archived/${LOG_NAME}.%d{yyyy-MM-dd}.%i.log
 			</fileNamePattern>
 			<!-- each file should be at most 50MB, keep 7 days worth of history, but 
 				at most 10GB -->

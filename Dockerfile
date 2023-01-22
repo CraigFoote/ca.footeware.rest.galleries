@@ -1,4 +1,10 @@
-FROM amd64/eclipse-temurin:19.0.1_10-jre-alpine
+FROM ubuntu:latest
+RUN apt update && \
+    apt install -y openjdk-19-jdk ca-certificates-java && \
+    apt clean && \
+    update-ca-certificates -f
+ENV JAVA_HOME /usr/lib/jvm/java-19-openjdk-amd64/
+RUN export JAVA_HOME
 VOLUME /opt/galleries
 RUN mkdir -p /opt/rest.galleries/logs/
 ARG JAR_FILE

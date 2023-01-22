@@ -76,7 +76,7 @@ class ImageControllerITTests {
 		String json = mvcResult.getResponse().getContentAsString();
 		Assertions.assertTrue(json.contains("David in Ferryland-1_modified.jpg"));
 
-		JsonPath path = JsonPath.compile("$[0]");
+		JsonPath path = JsonPath.compile("$[1]");
 		Map<String, String> map = path.read(json);
 		Assertions.assertEquals("David in Ferryland-1_modified.jpg", map.get("filename"));
 		String encoded = map.get("thumb");

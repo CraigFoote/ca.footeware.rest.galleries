@@ -20,7 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
 
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.common.ImageMetadata.ImageMetadataItem;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
 import org.springframework.beans.factory.annotation.Value;
@@ -128,20 +135,20 @@ public class ImageService {
 	 */
 	public Map<String, String> getExif(File file) throws ImageException {
 		Map<String, String> map = new LinkedHashMap<>();
-//		if (!"secret".equals(file.getName()) && !"webp".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
-//			try {
-//				ImageMetadata metadata = Imaging.getMetadata(file);
-//				if (metadata != null) {
-//					List<? extends ImageMetadataItem> items = metadata.getItems();
-//					for (ImageMetadataItem item : items) {
-//						String[] split = item.toString().split(": ");
-//						map.put(split[0], split[1]);
-//					}
-//				}
-//			} catch (ImageReadException | IOException e) {
-//				throw new ImageException(e.getLocalizedMessage());
-//			}
-//		}
+		if (!"secret".equals(file.getName()) && !"webp".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+			try {
+				ImageMetadata metadata = Imaging.getMetadata(file);
+				if (metadata != null) {
+					List<? extends ImageMetadataItem> items = metadata.getItems();
+					for (ImageMetadataItem item : items) {
+						String[] split = item.toString().split(": ");
+						map.put(split[0], split[1]);
+					}
+				}
+			} catch (ImageReadException | IOException e) {
+				throw new ImageException(e.getLocalizedMessage());
+			}
+		}
 		return map;
 	}
 
@@ -276,8 +283,15 @@ public class ImageService {
 	 */
 	public byte[] getThumbnailAsBytes(String galleryName, String imageName) throws ImageException {
 		try {
-			var file = getFileByName(galleryName, imageName);
-			BufferedImage originalImage = ImageIO.read(file);
+			File file = getFileByName(galleryName, imageName);
+			BufferedImage originalImage;
+			if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("webp")) {
+				ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
+				reader.setInput(new FileImageInputStream(file));
+				originalImage = reader.read(0);
+			} else {
+				originalImage = ImageIO.read(file);
+			}
 			int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 			BufferedImage image = resize(originalImage, type, getDimensions(originalImage, maxTnDim));
 			return convertToBytes(image);
