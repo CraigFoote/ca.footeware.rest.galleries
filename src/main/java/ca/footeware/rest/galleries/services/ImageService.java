@@ -31,6 +31,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.NameFileComparator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import ca.footeware.rest.galleries.exceptions.ImageException;
@@ -191,6 +192,7 @@ public class ImageService {
 	 * @return {@link File} array
 	 * @throws ImageException if an image-related exception occurs.
 	 */
+	@Cacheable(value = "files", key = "#galleryName")
 	public File[] getFiles(String galleryName) throws ImageException {
 		// Restrict the galleryName to letters and digits only. OK, and dashes and
 		// underscores.
@@ -260,6 +262,7 @@ public class ImageService {
 	 * @return byte[] may be empty
 	 * @throws ImageException if an image-related exception occurs.
 	 */
+	@Cacheable(value = "imageAsBytes", key = "#imageName")
 	public byte[] getImageAsBytes(String galleryName, String imageName) throws ImageException {
 		try {
 			var file = getFileByName(galleryName, imageName);
@@ -281,6 +284,7 @@ public class ImageService {
 	 * @return byte[] may be empty
 	 * @throws ImageException if an image-related exception occurs.
 	 */
+	@Cacheable(value = "thumbnailAsBytes", key = "#imageName")
 	public byte[] getThumbnailAsBytes(String galleryName, String imageName) throws ImageException {
 		try {
 			File file = getFileByName(galleryName, imageName);

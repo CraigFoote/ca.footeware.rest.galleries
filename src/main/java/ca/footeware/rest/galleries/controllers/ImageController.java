@@ -10,6 +10,7 @@ import java.util.Base64.Encoder;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,7 @@ public class ImageController {
 	 * @param exif
 	 * @return {@link String}
 	 */
+	@SuppressWarnings("unused")
 	private String compileExifString(String name, Map<String, String> exif) {
 		var b = new StringBuilder();
 		b.append("Name: " + name + "\n");
@@ -94,6 +96,7 @@ public class ImageController {
 	 * @return {@link List} of {@link ImageDTO}
 	 * @throws ImageException if an image-related exception occurs.
 	 */
+	@Cacheable(value = "galleries", key = "#galleryName")
 	@GetMapping(value = "/galleries/{galleryName}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ImageDTO> getGallery(@PathVariable String galleryName) throws ImageException {
 		checkName(galleryName);

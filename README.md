@@ -4,7 +4,16 @@
 3. docker push craigfoote/rest.galleries:[version]
 4. docker tag rest.galleries:[version] craigfoote/rest.galleries:latest
 5. docker push craigfoote/rest.galleries:latest
-6. docker run -p 8000:8000 -d --restart unless-stopped -v /opt/galleries:/opt/galleries --memory="1g" --memory-swap="2g" -t craigfoote/rest.galleries:latest &
+6. docker run 
+--name ca.footeware.rest.galleries.container 
+-p 8000:8000 
+-d 
+--restart unless-stopped 
+-v /opt/galleries:/opt/galleries 
+--memory="1g" 
+--memory-swap="2g" 
+-t craigfoote/rest.galleries:latest 
+
 7. http://localhost:8000/galleries
 
 # Reference Documentation
