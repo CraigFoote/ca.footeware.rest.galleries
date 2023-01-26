@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 RUN apt update && \
-    apt install -y openjdk-19-jdk ca-certificates-java && \
+    apt install -y openjdk-19-jre-headless ca-certificates-java && \
     apt clean && \
     update-ca-certificates -f
 ENV JAVA_HOME /usr/lib/jvm/java-19-openjdk-amd64/

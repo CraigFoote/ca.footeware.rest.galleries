@@ -183,8 +183,8 @@ class ImageServiceTests {
 		Assertions.assertNotNull(image);
 		int width = image.getWidth();
 		int height = image.getHeight();
-		Assertions.assertEquals(width, maxTnDim.intValue(), "ImageDTO was not the correct width.");
-		Assertions.assertTrue(height <= maxTnDim, "ImageDTO was too tall.");
+		Assertions.assertEquals(width, maxTnDim.intValue(), "Thumbnail was not the correct width.");
+		Assertions.assertTrue(height <= maxTnDim, "Thumbnail was too tall.");
 
 		bytes = service.getImageAsBytes(GALLERY_NAME, IMAGE_VERTICAL);
 		originalImage = ImageIO.read(new ByteArrayInputStream(bytes));
@@ -193,8 +193,8 @@ class ImageServiceTests {
 		Assertions.assertNotNull(image);
 		width = image.getWidth();
 		height = image.getHeight();
-		Assertions.assertTrue(width <= maxTnDim, "ImageDTO was too wide.");
-		Assertions.assertEquals(height, maxTnDim.intValue(), "ImageDTO was not the correct height.");
+		Assertions.assertTrue(width <= maxTnDim, "Thumbnail was too wide.");
+		Assertions.assertEquals(height, maxTnDim.intValue(), "Thumbnail was not the correct height.");
 
 		bytes = service.getImageAsBytes(GALLERY_NAME, IMAGE_SQUARE);
 		originalImage = ImageIO.read(new ByteArrayInputStream(bytes));
@@ -203,8 +203,8 @@ class ImageServiceTests {
 		Assertions.assertNotNull(image);
 		width = image.getWidth();
 		height = image.getHeight();
-		Assertions.assertEquals(width, maxTnDim.intValue(), "ImageDTO was not the correct width.");
-		Assertions.assertEquals(height, maxTnDim.intValue(), "ImageDTO was not the correct height.");
+		Assertions.assertEquals(width, maxTnDim.intValue(), "Thumbnail was not the correct width.");
+		Assertions.assertEquals(height, maxTnDim.intValue(), "Thumbnail was not the correct height.");
 	}
 
 }

@@ -6,7 +6,6 @@ package ca.footeware.rest.galleries.controllers;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.footeware.rest.galleries.exceptions.ImageException;
 import ca.footeware.rest.galleries.models.Gallery;
-import ca.footeware.rest.galleries.models.ImageDTO;
+import ca.footeware.rest.galleries.models.Thumbnail;
 import ca.footeware.rest.galleries.services.ImageService;
 
 /**
@@ -93,14 +92,14 @@ public class ImageController {
 	 * obtained from images in images.path.
 	 *
 	 * @param galleryName {@link String}
-	 * @return {@link List} of {@link ImageDTO}
+	 * @return {@link List} of {@link Thumbnail}
 	 * @throws ImageException if an image-related exception occurs.
 	 */
 	@Cacheable(value = "galleries", key = "#galleryName")
 	@GetMapping(value = "/galleries/{galleryName}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<ImageDTO> getGallery(@PathVariable String galleryName) throws ImageException {
+	public List<Thumbnail> getGallery(@PathVariable String galleryName) throws ImageException {
 		checkName(galleryName);
-		List<ImageDTO> dtos = new ArrayList<>();
+		List<Thumbnail> dtos = new ArrayList<>();
 		for (File file : service.getFiles(galleryName)) {
 			String filename = file.getName();
 			if ("secret".equals(filename)) {
@@ -109,13 +108,26 @@ public class ImageController {
 //				Map<String, String> exif = service.getExif(file);
 //				String exifString = compileExifString(filename, exif);
 				String exifString = "";
-				Encoder encoder = Base64.getEncoder();
 				byte[] thumbnailAsBytes = service.getThumbnailAsBytes(galleryName, filename);
-				String encodedThumb = encoder.encodeToString(thumbnailAsBytes);
-				String encodedImage = encoder.encodeToString(service.getImageAsBytes(galleryName, filename));
-				dtos.add(new ImageDTO(filename, exifString, encodedThumb, encodedImage));
+				String encodedThumb = Base64.getEncoder().encodeToString(thumbnailAsBytes);
+				dtos.add(new Thumbnail(filename, exifString, encodedThumb));
 			}
 		}
 		return dtos;
+	}
+
+	/**
+	 * Get the base64-encoded String of the requested image.
+	 * 
+	 * @param galleryName {@link String}
+	 * @param imageName   {@link String}
+	 * @return {@link String}
+	 * @throws ImageException
+	 */
+	@Cacheable(value = "images", key = "#imageName")
+	@GetMapping(value = "/galleries/{galleryName}/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+	public byte[] getImage(@PathVariable String galleryName, @PathVariable String imageName) throws ImageException {
+		checkName(galleryName);
+		return service.getImageAsBytes(galleryName, imageName);
 	}
 }

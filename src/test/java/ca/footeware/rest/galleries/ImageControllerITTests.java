@@ -5,7 +5,6 @@ package ca.footeware.rest.galleries;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,11 +64,10 @@ class ImageControllerITTests {
 	 * {@link ca.footeware.web.controllers.ImageController#getGallery(java.lang.String, org.springframework.ui.Model)}.
 	 *
 	 * @throws Exception if shit goes south
-	 *
 	 */
 	@Test
 	void testGetGallery() throws Exception {
-		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1")).andDo(print()).andExpect(status().isOk())
+		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()", is(5)))
 				.andExpect(result -> result.getResponse()).andReturn();
@@ -85,20 +83,17 @@ class ImageControllerITTests {
 		BufferedImage image = ImageIO.read(is);
 		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(84, image.getHeight(), "Image wrong height.");
+	}
 
-		path = JsonPath.compile("$[2]");
-		map = path.read(json);
-		Assertions.assertEquals("test-image-horizontal.png", map.get("filename"));
-		encoded = map.get("image");
-		bytes = Base64.getDecoder().decode(encoded);
-		is = new ByteArrayInputStream(bytes);
-		image = ImageIO.read(is);
+	@Test
+	void testGetImage() throws Exception {
+		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1/test-image-horizontal.png"))
+				.andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_JPEG))
+				.andExpect(result -> result.getResponse()).andReturn();
+		byte[] bytes = mvcResult.getResponse().getContentAsByteArray();
+		InputStream is = new ByteArrayInputStream(bytes);
+		BufferedImage image = ImageIO.read(is);
 		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
 		Assertions.assertEquals(1241, image.getHeight(), "Image wrong height.");
-	}
-	
-	@Test
-	void testWebp() {
-		
 	}
 }
