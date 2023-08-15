@@ -1,11 +1,19 @@
-# Building and Deploying
+# Building
+
 1. mvn clean install to generate the docker image
-2. docker tag rest.galleries:[version] craigfoote/rest.galleries:[version]
-3. docker push craigfoote/rest.galleries:[version]
-4. docker tag rest.galleries:[version] craigfoote/rest.galleries:latest
-5. docker push craigfoote/rest.galleries:latest
-6. docker run 
---name ca.footeware.rest.galleries.container 
+1. docker tag rest.galleries:[version] craigfoote/rest.galleries:[version]
+1. docker push craigfoote/rest.galleries:[version]
+1. docker tag rest.galleries:[version] craigfoote/rest.galleries:latest
+1. docker push craigfoote/rest.galleries:latest
+
+# Deploying
+
+1. docker pull craigfoote/rest.galleries:latest
+1. docker ps -a [note container id of previous deploy]
+1. docker stop [container id]
+1. docker rm [container id]
+1. docker run 
+--name rest.galleries 
 -p 8000:8000 
 -d 
 --restart unless-stopped 
@@ -13,10 +21,10 @@
 --memory="1g" 
 --memory-swap="2g" 
 -t craigfoote/rest.galleries:latest 
-
-7. http://localhost:8000/galleries
+1. http://localhost:8000/galleries
 
 # Reference Documentation
+
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
@@ -26,6 +34,7 @@ For further reference, please consider the following sections:
 * [Spring Web](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#web)
 
 # Guides
+
 The following guides illustrate how to use some features concretely:
 
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)

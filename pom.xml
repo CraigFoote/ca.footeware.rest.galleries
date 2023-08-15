@@ -10,11 +10,11 @@
 	</parent>
 	<groupId>ca.footeware</groupId>
 	<artifactId>rest.galleries</artifactId>
-	<version>3.2.0</version>
+	<version>3.3.0</version>
 	<name>ca.footeware.rest.galleries</name>
 	<description>Footeware Galleries REST service</description>
 	<properties>
-		<java.version>19</java.version>
+		<java.version>20</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
