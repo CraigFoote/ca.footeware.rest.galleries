@@ -4,6 +4,8 @@
 package ca.footeware.rest.galleries;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,7 +19,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -72,17 +73,17 @@ class ImageControllerITTests {
 				.andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()", is(5)))
 				.andExpect(result -> result.getResponse()).andReturn();
 		String json = mvcResult.getResponse().getContentAsString();
-		Assertions.assertTrue(json.contains("David in Ferryland-1_modified.jpg"));
+		assertTrue(json.contains("David in Ferryland-1_modified.jpg"));
 
 		JsonPath path = JsonPath.compile("$[1]");
 		Map<String, String> map = path.read(json);
-		Assertions.assertEquals("David in Ferryland-1_modified.jpg", map.get("filename"));
+		assertEquals("David in Ferryland-1_modified.jpg", map.get("filename"));
 		String encoded = map.get("thumb");
 		byte[] bytes = Base64.getDecoder().decode(encoded);
 		InputStream is = new ByteArrayInputStream(bytes);
 		BufferedImage image = ImageIO.read(is);
-		Assertions.assertEquals(150, image.getWidth(), "Image wrong width.");
-		Assertions.assertEquals(84, image.getHeight(), "Image wrong height.");
+		assertEquals(150, image.getWidth(), "Image wrong width.");
+		assertEquals(84, image.getHeight(), "Image wrong height.");
 	}
 
 	@Test
@@ -93,7 +94,7 @@ class ImageControllerITTests {
 		byte[] bytes = mvcResult.getResponse().getContentAsByteArray();
 		InputStream is = new ByteArrayInputStream(bytes);
 		BufferedImage image = ImageIO.read(is);
-		Assertions.assertEquals(1920, image.getWidth(), "Image wrong width.");
-		Assertions.assertEquals(1241, image.getHeight(), "Image wrong height.");
+		assertEquals(1920, image.getWidth(), "Image wrong width.");
+		assertEquals(1241, image.getHeight(), "Image wrong height.");
 	}
 }
