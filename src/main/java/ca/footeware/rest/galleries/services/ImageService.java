@@ -23,8 +23,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
 
-import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.common.ImageMetadata.ImageMetadataItem;
 import org.apache.commons.io.FilenameUtils;
@@ -146,7 +146,7 @@ public class ImageService {
 						map.put(split[0], split[1]);
 					}
 				}
-			} catch (ImageReadException | IOException e) {
+			} catch (IOException e) {
 				throw new ImageException(e.getLocalizedMessage());
 			}
 		}
