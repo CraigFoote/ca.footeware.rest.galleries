@@ -2,6 +2,7 @@ services:
   rest_galleries:
     image: rest.galleries:3.5.0
     container_name: rest.galleries
+    restart: unless-stopped
     ports:
       - 8000:8000
     volumes:
