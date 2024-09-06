@@ -24,7 +24,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
 
 import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.common.ImageMetadata.ImageMetadataItem;
 import org.apache.commons.io.FilenameUtils;
@@ -229,7 +228,7 @@ public class ImageService {
 	public List<Gallery> getGalleries() throws ImageException {
 		var folder = new File(imagesPath);
 		if (!folder.exists()) {
-			throw new ImageException("Image path not found: " + imagesPath);
+			throw new ImageException("Image path doesn't exist: " + imagesPath);
 		}
 		if (!folder.canRead()) {
 			throw new ImageException("Image path cannot be read: " + imagesPath);

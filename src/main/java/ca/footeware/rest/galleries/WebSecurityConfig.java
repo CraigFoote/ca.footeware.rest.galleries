@@ -40,7 +40,7 @@ public class WebSecurityConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/galleries/**").allowedOrigins("*").allowedMethods("GET", "POST", "OPTIONS",
-						"DELETE", "PUT");
+						"DELETE", "PUT", "HEAD");
 			}
 		};
 	}
