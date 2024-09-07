@@ -1,5 +1,7 @@
 FROM amd64/eclipse-temurin:22-jre
 ARG JAR_FILE
-ADD ${JAR_FILE} /opt/rest.galleries/app.jar
+ARG JAR_NAME
+ADD ${JAR_FILE} /opt/rest.galleries/${JAR_NAME}
 EXPOSE 8000
-ENTRYPOINT ["java","-jar","/opt/rest.galleries/app.jar"]
+ENV ENV_JAR_NAME=$JAR_NAME
+ENTRYPOINT java -jar /opt/rest.galleries/${ENV_JAR_NAME}

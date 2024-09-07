@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ca.footeware</groupId>
 	<artifactId>rest.galleries</artifactId>
-	<version>3.5.0</version>
+	<version>3.5.1</version>
 	<name>ca.footeware.rest.galleries</name>
 	<description>Footeware Galleries REST service</description>
 	<properties>
@@ -96,6 +96,7 @@
 					<tag>${project.version}</tag>
 					<buildArgs>
 						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+						<JAR_NAME>${project.build.finalName}.jar</JAR_NAME>
 					</buildArgs>
 				</configuration>
 			</plugin>
