@@ -1,3 +1,17 @@
+<style>
+	body {
+		background-color: #2c2c2c;
+		font-size: 24px;
+		color: #ddeeee;
+	}
+	h1,h2,h3 {
+		color: #569cd6;
+	}
+	code {
+		color: #ff8e3c;
+	}
+</style>
+
 # Preparation
 
 sudo mkdir -p /opt/rest.galleries/galleries
