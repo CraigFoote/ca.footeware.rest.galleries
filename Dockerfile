@@ -1,4 +1,4 @@
-FROM amd64/eclipse-temurin:22-jre
+FROM eclipse-temurin:22-jre-noble
 ARG JAR_FILE
 ARG JAR_NAME
 ADD ${JAR_FILE} /opt/rest.galleries/${JAR_NAME}

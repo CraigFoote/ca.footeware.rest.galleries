@@ -1,7 +1,7 @@
 <style>
 	body {
 		background-color: #2c2c2c;
-		font-size: 24px;
+		font-size: 22px;
 		color: #ddeeee;
 	}
 	h1,h2,h3 {
@@ -14,7 +14,8 @@
 
 # Preparation
 
-sudo mkdir -p /opt/rest.galleries/galleries
+1. sudo mkdir -p /opt/rest.galleries/galleries
+1. Fill it with folders of pictures.
 
 # Building
 
