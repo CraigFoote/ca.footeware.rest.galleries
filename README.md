@@ -14,8 +14,10 @@
 
 # Preparation
 
-1. sudo mkdir -p /opt/rest.galleries/galleries
-1. Fill it with folders of pictures.
+1. `sudo mkdir -p /opt/rest.galleries/logs`
+1. `sudo mkdir -p /opt/rest.galleries/galleries`
+1. `sudo chown craig:craig -R /opt/rest.galleries`
+1. Fill `galleries` with folders of pictures.
 
 # Building
 
