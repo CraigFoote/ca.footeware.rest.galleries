@@ -130,4 +130,18 @@ public class ImageController {
 		checkName(galleryName);
 		return service.getImageAsBytes(galleryName, imageName);
 	}
+
+	/**
+	 * Get a random image from the gallery of the provided name.
+	 * 
+	 * @param galleryName {@link String}
+	 * @return byte[] the image
+	 * @throws ImageException
+	 */
+	@GetMapping(value = "/galleries/{galleryName}/random", produces = MediaType.IMAGE_JPEG_VALUE)
+	public byte[] getRandomImageFromGallery(@PathVariable String galleryName) throws ImageException {
+		checkName(galleryName);
+		return service.random(galleryName);
+	}
+
 }

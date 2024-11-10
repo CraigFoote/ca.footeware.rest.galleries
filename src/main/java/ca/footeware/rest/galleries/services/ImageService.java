@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.random.RandomGenerator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -202,7 +203,7 @@ public class ImageService {
 		var folder = new File(imagesPath + File.separator + galleryName);
 		if (!folder.exists()) {
 			throw new ImageException(
-					"Expected a file at " + imagesPath + File.separator + galleryName + " but it doesn't exist.");
+					"Expected a folder at " + imagesPath + File.separator + galleryName + " but it doesn't exist.");
 		}
 		if (!folder.isDirectory()) {
 			throw new ImageException(
@@ -319,4 +320,17 @@ public class ImageService {
 		return resizedImage;
 	}
 
+	/**
+	 * Get a random image from gallery of provided name.
+	 * 
+	 * @param galleryName {@link String}
+	 * @return byte[]
+	 * @throws ImageException
+	 */
+	public byte[] random(String galleryName) throws ImageException {
+		File[] files = getFiles(galleryName);
+		int randomNum = RandomGenerator.getDefault().nextInt(0, files.length - 1);
+		File file = files[randomNum];
+		return getImageAsBytes(galleryName, file.getName());
+	}
 }
