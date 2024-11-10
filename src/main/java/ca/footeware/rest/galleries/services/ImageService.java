@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.random.RandomGenerator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -329,8 +328,21 @@ public class ImageService {
 	 */
 	public byte[] random(String galleryName) throws ImageException {
 		File[] files = getFiles(galleryName);
-		int randomNum = RandomGenerator.getDefault().nextInt(0, files.length - 1);
+		int randomNum = getRandomNumber(0, files.length - 1);
 		File file = files[randomNum];
 		return getImageAsBytes(galleryName, file.getName());
+	}
+
+	/**
+	 * Gets a random number between provided values. Note that when using
+	 * `java.util.random.RandomGenerator` a "No implementation of the random number
+	 * generator algorithm "L32X64MixRandom" is available" error occurs.
+	 * 
+	 * @param min int
+	 * @param max int
+	 * @return int
+	 */
+	private int getRandomNumber(int min, int max) {
+		return (int) ((Math.random() * (max - min)) + min);
 	}
 }
