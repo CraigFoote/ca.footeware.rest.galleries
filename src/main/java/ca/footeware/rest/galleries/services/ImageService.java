@@ -135,7 +135,7 @@ public class ImageService {
 	 */
 	public Map<String, String> getExif(File file) throws ImageException {
 		Map<String, String> map = new LinkedHashMap<>();
-		if (!"secret".equals(file.getName()) && !"webp".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+		if (!"secret".equals(file.getName())) {
 			try {
 				ImageMetadata metadata = Imaging.getMetadata(file);
 				if (metadata != null) {

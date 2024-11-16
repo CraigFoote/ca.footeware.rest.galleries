@@ -59,20 +59,26 @@ public class ImageController {
 	 * @param exif
 	 * @return {@link String}
 	 */
-	@SuppressWarnings("unused")
 	private String compileExifString(String name, Map<String, String> exif) {
-		var b = new StringBuilder();
-		b.append("Name: " + name + "\n");
-		b.append("Model: " + exif.get("Model") + "\n");
-		b.append("ProcessingSoftware: " + exif.get("ProcessingSoftware") + "\n");
-		b.append("DateTime: " + exif.get("DateTime") + "\n");
-		b.append("ExposureTime: " + exif.get("ExposureTime") + "\n");
-		b.append("FNumber: " + exif.get("FNumber") + "\n");
-		b.append("PhotographicSensitivity: " + exif.get("PhotographicSensitivity") + "\n");
-		b.append("ExposureCompensation: " + exif.get("ExposureCompensation") + "\n");
-		b.append("FocalLength: " + exif.get("FocalLength") + "\n");
-		b.append("FocalLengthIn35mmFormat: " + exif.get("FocalLengthIn35mmFormat"));
-		return b.toString();
+		String model = exif.get("Model") == null ? "" : exif.get("Model");
+		String dateTime = exif.get("DateTime") == null ? "" : exif.get("DateTime");
+		String exposureTime = exif.get("ExposureTime") == null ? "" : exif.get("ExposureTime");
+		String fNumber = exif.get("FNumber") == null ? "" : exif.get("FNumber");
+		String photographicSensitivity = exif.get("PhotographicSensitivity") == null ? ""
+				: exif.get("PhotographicSensitivity");
+		String exposureCompensation = exif.get("ExposureCompensation") == null ? "" : exif.get("ExposureCompensation");
+		String focalLength = exif.get("FocalLength") == null ? "" : exif.get("FocalLength");
+
+		var builder = new StringBuilder();
+		builder.append("Name: " + name + "\n");
+		builder.append("Model: " + model + "\n");
+		builder.append("DateTime: " + dateTime + "\n");
+		builder.append("ExposureTime: " + exposureTime + "\n");
+		builder.append("FNumber: " + fNumber + "\n");
+		builder.append("PhotographicSensitivity: " + photographicSensitivity + "\n");
+		builder.append("ExposureCompensation: " + exposureCompensation + "\n");
+		builder.append("FocalLength: " + focalLength + "\n");
+		return builder.toString();
 	}
 
 	/**
@@ -105,9 +111,8 @@ public class ImageController {
 			if ("secret".equals(filename)) {
 				break;
 			} else {
-//				Map<String, String> exif = service.getExif(file);
-//				String exifString = compileExifString(filename, exif);
-				String exifString = "";
+				Map<String, String> exif = service.getExif(file);
+				String exifString = compileExifString(filename, exif);
 				byte[] thumbnailAsBytes = service.getThumbnailAsBytes(galleryName, filename);
 				String encodedThumb = Base64.getEncoder().encodeToString(thumbnailAsBytes);
 				dtos.add(new Thumbnail(filename, exifString, encodedThumb));

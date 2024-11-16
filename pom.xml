@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>ca.footeware</groupId>
 	<artifactId>rest.galleries</artifactId>
-	<version>4.1.0</version>
+	<version>4.2.0</version>
 	<name>ca.footeware.rest.galleries</name>
 	<description>Footeware Galleries REST service</description>
 	<properties>
@@ -73,9 +73,9 @@
 			<version>1.0.0-alpha5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.sejda.imageio</groupId>
+			<groupId>com.github.usefulness</groupId>
 			<artifactId>webp-imageio</artifactId>
-			<version>0.1.6</version>
+			<version>0.8.0</version>
 		</dependency>
 	</dependencies>
 	<build>
