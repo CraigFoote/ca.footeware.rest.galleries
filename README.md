@@ -25,7 +25,7 @@
 # Development Certificate
 1. `openssl req -newkey rsa:2048 -keyout footeware.ca.test.key -x509 -days 365 -out footeware.ca.test.crt`
 1. `openssl rsa -in footeware.ca.test.key -aes256 -out aes.pem`
-1. Place key and its AES version in /src/main/resources along with the cert.
+1. Place cert, key and its AES version in /src/main/resources.
 
 # Building
 
@@ -34,6 +34,9 @@
 1. [https://localhost:8000/galleries](https://localhost:8000/galleries)
 1. `docker run --env JAVA_OPTS="-Dspring.profiles.active=dev" --name rest.galleries -p 8000:8000 -v /opt/rest.galleries/galleries:/opt/rest.galleries/galleries -t rest.galleries:[version]`
 1. [https://localhost:8000/galleries](https://localhost:8000/galleries)
+
+# Releasing
+
 1. commit changes to git and create tag
 1. `docker tag rest.galleries:[version] craigfoote/rest.galleries:[version]`
 1. `docker tag rest.galleries:[version] craigfoote/rest.galleries:latest`
