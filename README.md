@@ -1,20 +1,3 @@
-<style>
-	body {
-		background-color: #2c2c2c;
-		font-size: 18px;
-		color: #ddeeee;
-	}
-	h1,h2,h3 {
-		color: #569cd6;
-	}
-	a {
-		color: #0da6fa;
-	}
-	code {
-		color: #ff8e3c;
-	}
-</style>
-
 # Preparation
 
 1. `sudo mkdir -p /opt/rest.galleries/logs`
