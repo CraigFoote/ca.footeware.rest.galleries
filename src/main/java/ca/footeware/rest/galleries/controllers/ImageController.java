@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.footeware.rest.galleries.exceptions.ImageException;
@@ -25,6 +26,7 @@ import ca.footeware.rest.galleries.services.ImageService;
  *
  * @author Footeware.ca
  */
+@RequestMapping("/galleries")
 @RestController
 public class ImageController {
 
@@ -88,7 +90,7 @@ public class ImageController {
 	 * @return {@link List} of {@link Gallery}
 	 * @throws ImageException if an image-related exception occurs.
 	 */
-	@GetMapping(value = "/galleries", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Gallery> getGalleries() throws ImageException {
 		return service.getGalleries();
 	}
@@ -102,7 +104,7 @@ public class ImageController {
 	 * @throws ImageException if an image-related exception occurs.
 	 */
 	@Cacheable(value = "galleries", key = "#galleryName")
-	@GetMapping(value = "/galleries/{galleryName}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{galleryName}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Thumbnail> getGallery(@PathVariable String galleryName) throws ImageException {
 		checkName(galleryName);
 		List<Thumbnail> dtos = new ArrayList<>();
@@ -130,7 +132,7 @@ public class ImageController {
 	 * @throws ImageException
 	 */
 	@Cacheable(value = "images", key = "#imageName")
-	@GetMapping(value = "/galleries/{galleryName}/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping(value = "/{galleryName}/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
 	public byte[] getImage(@PathVariable String galleryName, @PathVariable String imageName) throws ImageException {
 		checkName(galleryName);
 		return service.getImageAsBytes(galleryName, imageName);
@@ -143,7 +145,7 @@ public class ImageController {
 	 * @return byte[] the image
 	 * @throws ImageException
 	 */
-	@GetMapping(value = "/galleries/{galleryName}/random", produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping(value = "/{galleryName}/random", produces = MediaType.IMAGE_JPEG_VALUE)
 	public byte[] getRandomImageFromGallery(@PathVariable String galleryName) throws ImageException {
 		checkName(galleryName);
 		return service.random(galleryName);
