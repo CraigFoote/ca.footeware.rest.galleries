@@ -165,7 +165,7 @@ class ImageServiceTests {
 	 */
 	@Test
 	void testImageService() throws ImageException {
-		ImageService service = new ImageService(imagesPath);
+		ImageService service = new ImageService(imagesPath, maxImgDim, maxTnDim);
 		Assertions.assertNotNull(service);
 	}
 

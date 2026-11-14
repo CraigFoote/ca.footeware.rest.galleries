@@ -3,6 +3,8 @@
  */
 package ca.footeware.rest.galleries;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -19,32 +22,47 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.jayway.jsonpath.JsonPath;
 
 import ca.footeware.rest.galleries.controllers.ImageController;
+import ca.footeware.rest.galleries.exceptions.ImageException;
+import ca.footeware.rest.galleries.services.ImageService;
 
 /**
  * Test {@link ImageController}.
  *
  * @author Footeware.ca
  */
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@EnableWebMvc
+@SpringBootTest
 class ImageControllerITTests {
 
-	@Autowired
-	private MockMvc mvc;
+	private MockMvc mockMvc;
+
+	@Value("${images.path}")
+	private String imagesPath;
+
+	@Value("${images.max.dimension}")
+	private int maxImgDim;
+
+	@Value("${images.thumbnails.max.dimension}")
+	private int maxTnDim;
+
+	@BeforeEach
+	void setup() {
+		try {
+			mockMvc = standaloneSetup(new ImageController(new ImageService(imagesPath, maxImgDim, maxTnDim))).build();
+		} catch (ImageException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Test method for
@@ -54,10 +72,9 @@ class ImageControllerITTests {
 	 */
 	@Test
 	void testGetGalleries() throws Exception {
-		MvcResult result = mvc.perform(get("/galleries")).andExpect(status().isOk()).andExpect(jsonPath("$").exists())
-				.andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()", is(1))).andReturn();
-		result.getResponse().getContentAsString().contains(
-				"{\"folder\":\"/src/test/resources/images/gallery1\",\"name\":\"gallery1\",\"secret\":false}");
+		mockMvc.perform(get("/galleries")).andExpect(status().isOk())
+				.andExpect(content().contentType("application/json")).andExpect(content().encoding(UTF_8))
+				.andExpect(content().string(containsString("[{\"name\":\"gallery1\",\"secret\":false}]")));
 	}
 
 	/**
@@ -68,10 +85,10 @@ class ImageControllerITTests {
 	 */
 	@Test
 	void testGetGallery() throws Exception {
-		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()", is(5)))
-				.andExpect(result -> result.getResponse()).andReturn();
+		MvcResult mvcResult = mockMvc.perform(get("/galleries/gallery1")).andExpect(status().isOk())
+				.andExpect(content().contentType("application/json")).andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$.length()", is(5))).andExpect(result -> result.getResponse()).andReturn();
+
 		String json = mvcResult.getResponse().getContentAsString();
 		assertTrue(json.contains("David in Ferryland-1_modified.jpg"));
 
@@ -88,9 +105,10 @@ class ImageControllerITTests {
 
 	@Test
 	void testGetImage() throws Exception {
-		MvcResult mvcResult = mvc.perform(get("/galleries/gallery1/test-image-horizontal.png"))
+		MvcResult mvcResult = mockMvc.perform(get("/galleries/gallery1/test-image-horizontal.png"))
 				.andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_JPEG))
 				.andExpect(result -> result.getResponse()).andReturn();
+
 		byte[] bytes = mvcResult.getResponse().getContentAsByteArray();
 		InputStream is = new ByteArrayInputStream(bytes);
 		BufferedImage image = ImageIO.read(is);

@@ -45,24 +45,35 @@ import ca.footeware.rest.galleries.models.Gallery;
 public class ImageService {
 
 	private String imagesPath;
-
-	@Value("${images.max.dimension}")
-	private String maxImgDim;
-
-	@Value("${images.thumbnails.max.dimension}")
-	private Integer maxTnDim;
+	private int maxImgDim;
+	private int maxTnDim;
 
 	/**
 	 * Constructor
 	 *
 	 * @param imagesPath {@link String} location on disk of images, injected
+	 * @param maxImgDim  int maximum image dimension.
+	 * @param maxTnDim   int maximum thumbnail dimension.
 	 * @throws ImageException if an images-related exception occurs.
 	 */
-	public ImageService(@Value("${images.path}") String imagesPath) throws ImageException {
+	public ImageService(@Value("${images.path}") String imagesPath, @Value("${images.max.dimension}") int maxImgDim,
+			@Value("${images.thumbnails.max.dimension}") int maxTnDim) throws ImageException {
+
 		if (imagesPath == null || imagesPath.isEmpty()) {
 			throw new ImageException("Images path cannot be empty.");
 		}
 		this.imagesPath = imagesPath;
+
+		if (maxImgDim < 0) {
+			throw new ImageException("Images' max dimensions cannot be negative.");
+		}
+		this.maxImgDim = maxImgDim;
+
+		if (maxTnDim < 0) {
+			throw new ImageException("Images' thumnail dimensions cannot be negative.");
+		}
+		this.maxTnDim = maxTnDim;
+
 		ImageIO.setUseCache(true);
 	}
 
@@ -267,8 +278,7 @@ public class ImageService {
 			var file = getFileByName(galleryName, imageName);
 			BufferedImage originalImage = ImageIO.read(file);
 			int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-			BufferedImage image = resize(originalImage, type,
-					getDimensions(originalImage, Integer.parseInt(maxImgDim)));
+			BufferedImage image = resize(originalImage, type, getDimensions(originalImage, maxImgDim));
 			return convertToBytes(image);
 		} catch (IOException e) {
 			throw new ImageException(e.getLocalizedMessage());
