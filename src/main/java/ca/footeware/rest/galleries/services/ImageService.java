@@ -52,8 +52,8 @@ public class ImageService {
 	 * Constructor
 	 *
 	 * @param imagesPath {@link String} location on disk of images, injected
-	 * @param maxImgDim  int maximum image dimension.
-	 * @param maxTnDim   int maximum thumbnail dimension.
+	 * @param maxImgDim  int maximum image dimension, injected
+	 * @param maxTnDim   int maximum thumbnail dimension, injected
 	 * @throws ImageException if an images-related exception occurs.
 	 */
 	public ImageService(@Value("${images.path}") String imagesPath, @Value("${images.max.dimension}") int maxImgDim,

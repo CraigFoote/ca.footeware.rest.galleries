@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.2</version>
+		<version>4.2.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ca.footeware</groupId>
 	<artifactId>rest.galleries</artifactId>
-	<version>4.4.0</version>
+	<version>4.5.0</version>
 	<name>ca.footeware.rest.galleries</name>
 	<description>Footeware Galleries REST service</description>
 	<properties>
@@ -79,6 +79,24 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>application.properties</include>
+					<include>application-dev.properties</include>
+					<include>aes.pem</include>
+					<include>footeware.ca.test.crt</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>application.properties</include>
+					<include>/images/*</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
