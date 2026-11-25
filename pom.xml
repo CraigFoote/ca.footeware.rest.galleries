@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>ca.footeware</groupId>
 	<artifactId>rest.galleries</artifactId>
-	<version>4.6.0</version>
+	<version>4.6.1</version>
 	<name>ca.footeware.rest.galleries</name>
 	<description>Footeware Galleries REST service</description>
 	<properties>
@@ -79,24 +79,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>application.properties</include>
-					<include>application-dev.properties</include>
-					<include>aes.pem</include>
-					<include>footeware.ca.test.crt</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/test/resources</directory>
-				<includes>
-					<include>application.properties</include>
-					<include>/images/*</include>
-				</includes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
